@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+		*{
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+			border-radius: 5px;
+			font-family: 'Indie Flower', cursive;
+			letter-spacing: 6px;
+			font-weight: 900;
+			font-size: 24px;
+
+		}
+
+		#wrapper {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			width: 500px;
+			text-align: center;
+		}
+        input {border: 3px solid skyBlue;
+        	margin-top: 10px;
+        	padding: 10px;
+        	width: inherit;
+        	text-align: center;
+        	}
+        input:focus {
+        	border: 3px solid plum;
+        	outline: none;
+        }
+ 
+       #wrapper div p{background-color: skyBlue;
+       	margin: 10px;}
+
+       	#wrapper div p.active {color: red;
+       		background-color: white;}
+
+	</style>
+</head>
+<body>
+	<div id="wrapper">
+	<p>Please enter your name by English letters and press the button 'Enter'</p>
+	<input type="text" onkeyup="func()">
+	<div></div>
+	</div>
+
+	<script>
+
+	let input= document.querySelector('input');
+	let div = document.querySelector('#wrapper div');
+    let span = document.querySelector('#wrapper span');
+
+		function func() {
+			if(event.key =='Enter'){
+				div.innerHTML = '';
+
+				if (input.value == '') {
+				let p = document.createElement('p');
+				p.innerHTML = 'Please, insert name';
+				p.classList.add('active');
+				div.append(p);
+				return;
+			}
+
+	
+	let xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function(){
+		if(this.readyState ==4 && this.status ==200) {
+			let obj = JSON.parse(this.responseText);
+
+			let arr = [];
+			let arrCountry = []
+			let persent = [];
+			for(let key in obj){
+              
+				 arr.push(obj[key]);}
+				 arr.shift();
+				
+				for(let elem of arr){
+					if(elem.length!=0){
+                   for(let key in elem){
+                    let obj2 =elem[key];
+                     for(let key in obj2){
+                   if(key ==='country_id') arrCountry.push(obj2[key]);
+                   else if(key==='probability') persent.push(obj2[key]);
+                  }
+				}
+				           for(let i=0; i< arrCountry.length; i++){
+                           let p = document.createElement('p');
+                           p.innerHTML = i+1 +"."+ ' Your country: ' +arrCountry[i] +'<br>' +"Rate:"+ Math.round(+(persent[i])*100)+ '%';
+                           div.append(p);}
+                       }
+                       else {let p = document.createElement('p');
+				p.innerHTML = 'This name is absent in our Database';
+				p.classList.add('active');
+				div.append(p);}
+				}
+
+		}
+
+	}
+	let link = 'https://api.nationalize.io/?name=';
+	xhttp.open('GET',link+input.value,true);
+    xhttp.send();
+      }
+    }
+	</script>
+
+</body>
+</html>
