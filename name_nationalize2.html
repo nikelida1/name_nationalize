@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
+		*{
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+			border-radius: 5px;
+			font-family: 'Indie Flower', cursive;
+			letter-spacing: 6px;
+			font-weight: 900;
+			font-size: 24px;
+
+		}
+
+		#wrapper {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			width: 600px;
+			text-align: center;
+		}
+        input {border: 3px solid skyBlue;
+        	margin-top: 10px;
+        	padding: 10px;
+        	width: inherit;
+        	text-align: center;
+        	}
+        input:focus {
+        	border: 3px solid plum;
+        	outline: none;
+        }
+ 
+       #wrapper div p{background-color: skyBlue;
+        color: white;
+       	margin: 10px 0;
+       	display: flex;
+       	justify-content: space-between;
+       	align-items: center;
+       	text-align: left;
+       	padding: 0 20px;}
+
+       #wrapper div p img {
+       display: block;
+       width: 56px;
+       height: 42px;
+       }
+
+       	#wrapper div p.active {color: red;
+       		background-color: white;}
+
+  .piechart {
+            display: none;
+            position: absolute;
+            left: 110%;
+            top: -12%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            border:1px solid black;
+        }
+
+#wrapper.active {
+      position: absolute;
+      top: 50%;
+      left: 38%;
+      transform: translate(-50%,-50%);
+      width: 600px;
+      text-align: center;
+    }
+	</style>
+</head>
+<body>
+	<div id="wrapper">
+	<p>Please enter your name by English letters and press the button 'Enter'</p>
+	<input type="text" onkeyup="func()">
+	<div></div>
+	</div>
+
+    <script src="countryName.js"></script>
+	<script>
+	let input= document.querySelector('input');
+	let div = document.querySelector('#wrapper div');
+    let span = document.querySelector('#wrapper span');
+    let img = document.querySelector ('img');
+    let body = document.querySelector('body');
+   
+		function func() {
+			if(event.key =='Enter'){
+				div.innerHTML = '';
+
+
+				if (input.value == '') {
+				let p = document.createElement('p');
+				p.innerHTML = 'Please, insert name';
+				p.classList.add('active');
+				div.append(p);
+        wrapper.classList.remove('active');
+        let allpiecharts2 = document.querySelectorAll('.piechart');
+        for(let elem of allpiecharts2){
+        elem.style.display = 'none';}
+				return;
+			}
+
+	
+	let xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function(){
+		if(this.readyState ==4 && this.status ==200) {
+			let obj = JSON.parse(this.responseText);
+
+			let arr = [];
+			let arrCountry = []
+			let persent = [];
+			for(let key in obj){
+              
+				 arr.push(obj[key]);}
+				 arr.shift();
+				
+				for(let elem of arr){
+					if(elem.length!=0){
+                   for(let key in elem){
+                    let obj2 =elem[key];
+                     for(let key in obj2){
+                   if(key ==='country_id') arrCountry.push(obj2[key]);
+                   else if(key==='probability') persent.push(obj2[key]);
+                  }
+				}
+
+
+
+		
+
+                    let arrPersent =[];
+                    let mainCountry = [];
+                    let justArr =[];
+				           for(let i=0; i< arrCountry.length; i++){
+                           let p = document.createElement('p');
+                           let img = document.createElement('img');
+                           let longCountry;
+                           for(let key in countryNames){
+                             if(arrCountry[i] ==key){
+                             	longCountry = countryNames[key];
+                              mainCountry.push(longCountry);
+                              arrPersent.push(Math.floor(+(persent[i])*100));
+                              justArr.push(persent[i]);
+                           p.innerHTML = i+1 +"."+ ' Your country: ' + longCountry +'<br>' +"Rate:"+ Math.floor(+(persent[i])*100)+ '%';
+
+                           img.src= 'https://flagcdn.com/56x42/'+arrCountry[i].toLowerCase()+'.png';
+                            p.append(img);
+                           div.append(p);
+                           }}}
+
+let piechart = document.createElement('div');
+        piechart.classList.add('piechart');
+         piechart.style.background ='';
+         piechart.style.display = 'none';
+
+        let firstColor = arrPersent[0];
+        let secondColor = firstColor + arrPersent[1];
+        let thirdColor =  secondColor + arrPersent[2] ;
+
+        let firstColorPersent = firstColor + '%';
+        let secondColorPersent  = secondColor + '%';
+        let thirdColorPersent = thirdColor + '%';
+
+let allPs = document.querySelectorAll('#wrapper div p');
+
+
+
+ if(justArr.length==3) {
+  piechart.style.display = 'block';
+  piechart.style.background = 'conic-gradient(#453545 0 '+ firstColorPersent +', #8d688d 0 '+ secondColorPersent + ', #dda0dd 0 ' + thirdColorPersent + ', white 0 100%)';
+  let divInpiechart1 = document.createElement('div');
+  /*divInpiechart1.innerHTML = mainCountry[0] + ':'+ arrPersent[0] + '%';*/
+
+
+  let divInpiechart2 = document.createElement('div');
+ /* divInpiechart2.innerHTML = mainCountry[1] + ':'+ arrPersent[1] + '%';*/
+ 
+ 
+  let divInpiechart3 = document.createElement('div');
+ /* divInpiechart3.innerHTML = mainCountry[2]+ ':'+arrPersent[2] + '%';*/
+
+
+   /*whatPosition(divInpiechart1, divInpiechart2, divInpiechart3, firstColor, secondColor, thirdColor);*/
+
+piechart.append(divInpiechart1, divInpiechart2, divInpiechart3);
+
+
+
+allPs[0].style.backgroundColor = '#453545';
+allPs[1].style.backgroundColor = '#8d688d';
+allPs[2].style.backgroundColor = '#dda0dd';
+}
+
+ else if(justArr.length==2){
+  piechart.style.display = 'block';
+  piechart.style.background = 'conic-gradient(#453545 0 '+ firstColorPersent +', #8d688d 0 '+ secondColorPersent + ', white 0 100%)';
+  let divInpiechart1 = document.createElement('div');
+   /*divInpiechart1.innerHTML = mainCountry[0] + ':'+ arrPersent[0] + '%';*/
+ whatPosition(divInpiechart1,firstColor);
+
+  let divInpiechart2 = document.createElement('div');
+  /*divInpiechart2.innerHTML = mainCountry[1] + ':'+ arrPersent[1] + '%';*/
+   whatPosition(divInpiechart2,secondColor);
+
+  allPs[0].style.backgroundColor = '#453545';
+allPs[1].style.backgroundColor = '#8d688d';
+}
+ else if(justArr.length==1) {
+  piechart.style.display = 'block';
+ /* piechart.style.background = 'conic-gradient(#453545 0 '+ firstColorPersent + ', white 0 100%)';*/
+  let divInpiechart1 = document.createElement('div');
+  /*divInpiechart1.innerHTML = mainCountry[0] + ':'+ arrPersent[0] + '%';*/
+ whatPosition(divInpiechart1,firstColor);
+ allPs[0].style.backgroundColor = '#453545';}
+
+ else if (justArr.length==1 && justArr[0]==1) {
+  document.querySelector('.piechart').style.display = 'none';}
+        wrapper.append(piechart);
+        wrapper.classList.add('active');
+      
+   }
+
+
+         else {let p = document.createElement('p');
+				p.innerHTML = 'This name is absent in our Database';
+				p.classList.add('active');
+				div.append(p);
+        let allpiecharts = document.querySelectorAll('.piechart');
+        for(let elem of allpiecharts){
+        elem.style.display = 'none';}
+        wrapper.classList.remove('active');
+        }
+				}
+
+		}
+
+	}
+	let link = 'https://api.nationalize.io/?name=';
+	xhttp.open('GET',link+input.value,true);
+    xhttp.send();
+      }
+    }
+ 
+
+ /*function whatPosition(elem1,elem2,elem3,per1,per2,per3){
+  console.log(per1);
+  console.log(per2);
+  console.log(per3);
+  let x = 100* (Math.cos(90))+125;
+  let y = 100* (Math.sin(90))+125;
+   console.log(x);
+   console.log(y);
+ }
+ /*elem1.style.position = 'absolute';
+ elem2.style.position = 'absolute';
+ elem3.style.position = 'absolute';
+ elem1.style.display = 'none';
+ elem2.style.display = 'none';
+ elem3.style.display = 'none';
+
+ if(per3<=25){
+    elem1.style.left = 50+per1+'%';
+    elem2.style.left = 50+per2+'%';
+    elem3.style.left = 50+per3+'%';
+    elem1.style.top = 10+per1+'%';
+    elem2.style.top = 12+per2+'%';
+    elem3.style.top = 15+per3+'%';
+    console.log('one');
+ }
+*/
+/*else if(per3>=26 && per3>50 && per1>=25 && per2<=37,5){
+   console.log(per3);
+    elem1.style.left = 60+'%';
+    elem2.style.left = 65+'%';
+    elem3.style.left = 50+2+'%';
+    elem1.style.top = 35+'%';
+    elem2.style.top = 80+'%';
+    elem3.style.top = 90+'%';
+    console.log('twoo');
+ }*/
+/*else if(per3>=26 && per3<=50  && per1>=25 && per2>37,5){
+    elem1.style.left = 65+'%';
+    elem2.style.left = 50+per2/2+'%';
+    elem3.style.left = 50 +'%';
+    elem1.style.top = 35+'%';
+    elem2.style.top = 80+'%';
+    elem3.style.top = 90+'%';
+    console.log('three');
+ }
+
+ else if(per3>=51 && per3<=75 && per1>=50 && per2<=62,5) {
+    elem1.style.left = 65+'%';
+    elem2.style.left = 40+'%';
+    elem3.style.left = 15 +'%';
+    elem1.style.top = 50+'%';
+    elem2.style.top = 90+'%';
+    elem3.style.top = 55+'%';
+    console.log('four');
+ }
+
+  else if(per3>=51 && per3<=75 && per1>=25 && per2<=50) {
+    elem1.style.left = 65+'%';
+    elem2.style.left = 70+'%';
+    elem3.style.left = 30 +'%';
+    elem1.style.top = 50+'%';
+    elem2.style.top = 80+'%';
+    elem3.style.top = 80+'%';
+    console.log('five');
+ }
+
+  elem1.style.display = 'block';
+ elem2.style.display = 'block';
+ elem3.style.display = 'block';
+
+}
+ /*elem.style.border = '1px solid black';
+ elem.style.display = 'block';
+ elem.style.width = '100px';
+
+ if(whatPersent>=0 && whatPersent<=100) {
+
+    elem.style.left = 50+(whatPersent*0.5)+'%';
+    elem.style.top = whatPersent+'%';
+  console.log(whatPersent);}
+
+
+  }
+  /*if(whatPersent>=0 && whatPersent<=2) {
+    elem.style.position = 'absolute';
+    elem.style.left = '50%';
+    elem.style.top = '0%';
+  }
+
+  else if(whatPersent>=3 && whatPersent<=5) {
+    elem.style.position = 'absolute';
+    elem.style.left = '53%';
+    elem.style.top = '7%';
+  }
+
+  else if(whatPersent>=6 && whatPersent<=8) {
+    elem.style.position = 'absolute';
+    elem.style.left = '56%';
+    elem.style.top = '14%';
+  }
+
+   else if(whatPersent>=8 && whatPersent<=10) {
+    elem.style.position = 'absolute';
+    elem.style.left = '59%';
+    elem.style.top = '20%';
+  }
+ if(whatPersent>=11 && whatPersent<=13) {
+    elem.style.position = 'absolute';
+    elem.style.left = '62%';
+    elem.style.top = '25%';
+  
+  }
+
+  else if(whatPersent>=14 && whatPersent<=16) {
+    elem.style.position = 'absolute';
+    elem.style.left = '62%';
+    elem.style.top = '30%';
+  }
+
+  else if(whatPersent>=17 && whatPersent<=19) {
+    elem.style.position = 'absolute';
+    elem.style.left = '62%';
+    elem.style.top = '30%';
+  }
+
+   else if(whatPersent>=20 && whatPersent<=22) {
+    elem.style.position = 'absolute';
+    elem.style.left = '65%';
+    elem.style.top = '20%';
+  }
+
+ if(whatPersent>=23 && whatPersent<=25) {
+    elem.style.position = 'absolute';
+    elem.style.left = '65%';
+    elem.style.top = '38%';
+  }
+
+  else if(whatPersent>=26 && whatPersent<=28) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '39%';
+  }
+
+  else if(whatPersent>=29 && whatPersent<=31) {
+    elem.style.position = 'absolute';
+    elem.style.left = '65%';
+    elem.style.top = '28%';
+  }
+
+   else if(whatPersent>=32 && whatPersent<=34) {
+    elem.style.position = 'absolute';
+  elem.style.left = '55%';
+    elem.style.top = '55%';
+  }
+ if(whatPersent>=35 && whatPersent<=37) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '60%';
+ }
+
+  else if(whatPersent>=38 && whatPersent<=40) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '60%';
+  }
+
+  else if(whatPersent>=41 && whatPersent<=43) {
+    elem.style.position = 'absolute';
+    elem.style.left = '60%';
+    elem.style.top = '72%';
+  }
+
+   else if(whatPersent>=44 && whatPersent<=46) {
+    elem.style.position = 'absolute';
+    elem.style.left = '60%';
+    elem.style.top = '80%';
+  }
+
+  if(whatPersent>=47 && whatPersent<=49) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '85%';
+  }
+
+  else if(whatPersent>=50 && whatPersent<=52) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '85%';
+  }
+
+  else if(whatPersent>=53 && whatPersent<=55) {
+    elem.style.position = 'absolute';
+    elem.style.left = '40%';
+    elem.style.top = '85%';
+  }
+
+   else if(whatPersent>=56 && whatPersent<=58) {
+    elem.style.position = 'absolute';
+    elem.style.left = '60%';
+    elem.style.top = '85%';
+  }
+ if(whatPersent>=59 && whatPersent<=61) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '85%';
+  }
+
+  else if(whatPersent>=62 && whatPersent<=64) {
+    elem.style.position = 'absolute';
+    elem.style.left = '30%';
+    elem.style.top = '80%';
+  }
+
+  else if(whatPersent>=65 && whatPersent<=67) {
+    elem.style.position = 'absolute';
+    elem.style.left = '30%';
+    elem.style.top = '80';
+  }
+
+   else if(whatPersent>=68 && whatPersent<=70) {
+    elem.style.position = 'absolute';
+    elem.style.left = '27%';
+    elem.style.top = '78%';
+  }
+
+ if(whatPersent>=71 && whatPersent<=73) {
+    elem.style.position = 'absolute';
+    elem.style.left = '27%';
+    elem.style.top = '75%';
+  }
+
+  else if(whatPersent>=74 && whatPersent<=76) {
+    elem.style.position = 'absolute';
+    elem.style.left = '25%';
+    elem.style.top = '25%';
+  }
+
+  else if(whatPersent>=77 && whatPersent<=79) {
+    elem.style.position = 'absolute';
+    elem.style.left = '25%';
+    elem.style.top = '35%';
+  }
+
+   else if(whatPersent>=80 && whatPersent<=82) {
+    elem.style.position = 'absolute';
+    elem.style.left = '60%';
+    elem.style.top = '45%';
+  }
+ if(whatPersent>=83 && whatPersent<=85) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '5%';
+  }
+
+  else if(whatPersent>=86 && whatPersent<=88) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '25%';
+  }
+
+  else if(whatPersent>=89 && whatPersent<=91) {
+    elem.style.position = 'absolute';
+    elem.style.left = '60%';
+    elem.style.top = '35%';
+  }
+
+   else if(whatPersent>=92 && whatPersent<=93) {
+    elem.style.position = 'absolute';
+    elem.style.left = '60%';
+    elem.style.top = '45%';
+  }
+ else if(whatPersent>=94 && whatPersent<=96) {
+    elem.style.position = 'absolute';
+    elem.style.left = '55%';
+    elem.style.top = '25%';
+  }
+
+  else if(whatPersent>=97 && whatPersent<=99) {
+    elem.style.position = 'absolute';
+    elem.style.left = '60%';
+    elem.style.top = '35%';
+  }
+
+   else if(whatPersent==93) {
+    elem.style.position = 'absolute';
+    elem.style.left = '60%';
+    elem.style.top = '45%';
+  }
+*/
+
+
+ 
+	</script>
+
+</body>
+</html>
